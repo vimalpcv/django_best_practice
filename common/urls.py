@@ -17,9 +17,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from user import urls as user_urls
+from.views import HealthCheck
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+
+    path("js/", HealthCheck.as_view(), name='user'),
 
     path('api/user/', include(user_urls))
 ]
