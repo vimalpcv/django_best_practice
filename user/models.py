@@ -29,7 +29,7 @@ class User(AbstractUser):
     emp_id = models.CharField(max_length=10, null=False, blank=False, unique=True, db_index=True)
     gender = models.CharField(max_length=6, choices=GENDER, default=MALE)
     #avatar = models.ImageField(upload_to='/avatars', blank=True, null=True)
-    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, null=False, blank=False)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, null=True, blank=False)
 
     class Meta:
         # indexes = [

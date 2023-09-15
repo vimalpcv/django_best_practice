@@ -6,7 +6,7 @@ from environment import env, BASE_DIR
 LOGS = '/logs/'
 LOGS_DIR = os.path.join(BASE_DIR, 'logs')
 
-logging_environment = env('LOGGING', default='file')
+logging_environment = env('LOGGING', default='STREAM_HANDLER')
 
 LOGGING = {
     'version': 1,
@@ -19,13 +19,13 @@ LOGGING = {
                       " | MESSAGE - %(message)s"
                       " |"
         },
-        'success': {
+        'request': {
             'format': "[%(asctime)s] => | LOG STATUS - %(levelname)s"
+                      " | STATUS - %(status)-7s"
                       " | METHOD - %(method)-4s"
                       " | FETCH_URL - %(url)s"
                       " | REQUEST_DATA - %(request_data)s"
                       " | USER - %(user)s"
-                      " | STATUS - %(status)s"
                       " | RESPONSE - %(response_data)s"
                       " | MESSAGE - %(message)s"
                       " |"
@@ -49,9 +49,9 @@ LOGGING = {
             'level': 'INFO',
             'handlers': ['info']
         },
-        'success': {
+        'request': {
             'level': 'INFO',
-            'handlers': ['success']
+            'handlers': ['request']
         },
         'error': {
             'level': 'ERROR',
@@ -61,34 +61,56 @@ LOGGING = {
     }
 }
 
-if logging_environment == 'file':
+if logging_environment == 'FILE_HANDLER':
     LOGGING['handlers']['info'] = {
         'formatter': 'info',
         'class': 'logging.FileHandler',
-        'filename': str(BASE_DIR) + LOGS + 'info_log_response__{}.log'.format(datetime.now().strftime("%Y_%m_%d")),
+        'filename': str(BASE_DIR) + LOGS + 'info_log__{}.log'.format(datetime.now().strftime("%Y_%m_%d")),
     }
-    LOGGING['handlers']['success'] = {
-        'formatter': 'success',
+    LOGGING['handlers']['request'] = {
+        'formatter': 'request',
         'class': 'logging.FileHandler',
         'filename': str(
-            BASE_DIR) + LOGS + 'success_log_response__{}.log'.format(datetime.now().strftime("%Y_%m_%d")),
+            BASE_DIR) + LOGS + 'request_log__{}.log'.format(datetime.now().strftime("%Y_%m_%d")),
     }
     LOGGING['handlers']['error'] = {
         'formatter': 'error',
         'class': 'logging.FileHandler',
-        'filename': str(BASE_DIR) + LOGS + 'error_log_response__{}.log'.format(datetime.now().strftime("%Y_%m_%d")),
+        'filename': str(BASE_DIR) + LOGS + 'error_log__{}.log'.format(datetime.now().strftime("%Y_%m_%d")),
     }
 
-elif logging_environment == 'streamHandler':
-    LOGGING['handlers']['info'] = LOGGING['handlers']['success'] = LOGGING['handlers']['error'] = {
-        'class': 'logging.StreamHandler'
+elif logging_environment == 'STREAM_HANDLER':
+    LOGGING['handlers']['info'] = {
+        'class': 'logging.StreamHandler',
+        'formatter': 'info',
+    }
+    LOGGING['handlers']['request'] = {
+        'class': 'logging.StreamHandler',
+        'formatter': 'request',
+    }
+    LOGGING['handlers']['error'] = {
+        'class': 'logging.StreamHandler',
+        'formatter': 'error',
     }
 
-elif logging_environment == 'logstash':
-    LOGGING['handlers']['info'] = LOGGING['handlers']['success'] = LOGGING['handlers']['error'] = {
+elif logging_environment == 'LOGSTASH_HANDLER':
+    LOGGING['handlers']['info'] = {
         'class': 'logstash.TCPLogstashHandler',
         'host': 'logstash',
         'port': 5959,  # default : 5959
+        'formatter': 'error',
+    }
+    LOGGING['handlers']['request'] = {
+        'class': 'logstash.TCPLogstashHandler',
+        'host': 'logstash',
+        'port': 5959,  # default : 5959
+        'formatter': 'request',
+    }
+    LOGGING['handlers']['error'] = {
+        'class': 'logstash.TCPLogstashHandler',
+        'host': 'logstash',
+        'port': 5959,  # default : 5959
+        'formatter': 'error',
     }
 
 
@@ -107,7 +129,7 @@ def info_log(request, message) -> None:
 def error_log(request) -> None:
     exc_type, exc_value, exc_traceback = sys.exc_info()
     data = {'method': request.method, 'url': request.path,
-            'request_data': json.loads(request.body).get('data', None) if request.body else None,
+            'request_data': request.data,
             'user': request.user,
             'exc_type': exc_type.__name__,
             'exc_file_name': exc_traceback.tb_frame.f_code.co_filename,

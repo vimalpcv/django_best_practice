@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 from . import env, BASE_DIR
 import datetime, os
+from datetime import timedelta
 
 SECRET_KEY = 'django-insecure-9qd6id-rfjca%#yo#9e@oscy-!u)q#o(bu&ybe$lc1)1)h0qd%'
 
@@ -31,11 +32,22 @@ INSTALLED_APPS = [
 ]
 
 REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    ]
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
+    'SLIDING_TOKEN_LIFETIME': timedelta(days=30),
+    'SLIDING_TOKEN_REFRESH_LIFETIME_GRACE_PERIOD': timedelta(days=7),
+    'SLIDING_TOKEN_REFRESH_LIFETIME_ALLOW_REFRESH': True,
+    'SLIDING_TOKEN_REFRESH_GRACE_PERIOD': timedelta(days=7),
+    'SLIDING_TOKEN_LIFETIME_GRACE_PERIOD_ALLOW_REFRESH': True,
 }
 
 MIDDLEWARE = [
@@ -48,7 +60,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'common.middleware.EncryptionMiddleware'
 ]
-
 ROOT_URLCONF = 'common.urls'
 
 TEMPLATES = [
@@ -118,7 +129,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'user.User'
 
 AES_SECRET_KEY = '2HOwmMKZS1wWvq6qxdeA5moUCubLJiXV'
-ENCRYPT = False
+ENCRYPT = True
 
 from common.logger import LOGGING
+
 LOGGING = LOGGING

@@ -10,7 +10,6 @@ class CommonUtils:
 
     @staticmethod
     def b64_decode(data: bytes) -> bytes:
-        print('b64_decode', type(base64.b64decode(data)))
         return base64.b64decode(data)
 
     @staticmethod
@@ -20,14 +19,14 @@ class CommonUtils:
 
             # logging the success response
             extras = {
+                'status': 'SUCCESS',
                 'method': request.method,
                 'url': request.path,
-                'request_data': json.loads(request.body).get('data', None) if request.body else None,
-                'status': 'SUCCESS',
+                'request_data': request.data,
                 'response_data': str(response),
                 'user': request.user,
             }
-            logger = logging.getLogger('success')
+            logger = logging.getLogger('request')
             logger.info('Request Successful', extra=extras)
 
             return Response(response, status=200)
@@ -38,6 +37,7 @@ class CommonUtils:
     def dispatch_failure(request, error, error_message=None):
         try:
             response_data = {
+                'status': 'FAILED',
                 'code': error['code'],
                 'message': error['message'] + ": " + str(error_message) if error_message else error['message']
             }
@@ -46,14 +46,17 @@ class CommonUtils:
 
             # logging the failure response
             extras = {
+                'status': 'FAILED',
                 'method': request.method,
                 'url': request.path,
-                'request_data': json.loads(request.body).get('data', None) if request.body else None,
-                'status': 'FAILED',
+                'request_data': request.data,
                 'response_data': str(response),
                 'user': request.user,
             }
-            logger = logging.getLogger('success')
-            logger.info('Request Successful', extra=extras)
+            logger = logging.getLogger('request')
+            logger.info(response_data['message'], extra=extras)
+
+            return Response(response_data, status=error['status'])
         except Exception as e:
             print('Exception in dispatch_failure', str(e))
+

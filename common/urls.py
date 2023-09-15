@@ -21,9 +21,5 @@ from.views import HealthCheck
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-
-
-    path("js/", HealthCheck.as_view(), name='user'),
-
-    path('api/user/', include(user_urls))
+    path('', include(user_urls))
 ]
