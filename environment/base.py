@@ -14,6 +14,7 @@ from pathlib import Path
 from . import env, BASE_DIR
 import datetime, os
 from datetime import timedelta
+from common.logger import LOGGING
 
 SECRET_KEY = 'django-insecure-9qd6id-rfjca%#yo#9e@oscy-!u)q#o(bu&ybe$lc1)1)h0qd%'
 
@@ -28,7 +29,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
-    'user'
+    'rest_framework_simplejwt.token_blacklist',
+    'drf_spectacular',
+
+    'user',
 ]
 
 REST_FRAMEWORK = {
@@ -38,16 +42,21 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'EXCEPTION_HANDLER': 'common.exception_handlers.custom_exception_handler',
+
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
-    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
-    'SLIDING_TOKEN_LIFETIME': timedelta(days=30),
-    'SLIDING_TOKEN_REFRESH_LIFETIME_GRACE_PERIOD': timedelta(days=7),
-    'SLIDING_TOKEN_REFRESH_LIFETIME_ALLOW_REFRESH': True,
-    'SLIDING_TOKEN_REFRESH_GRACE_PERIOD': timedelta(days=7),
-    'SLIDING_TOKEN_LIFETIME_GRACE_PERIOD_ALLOW_REFRESH': True,
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=10),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'UPDATE_LAST_LOGIN': True,
+    'SIGNING_KEY': SECRET_KEY,
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
 }
 
 MIDDLEWARE = [
@@ -128,9 +137,23 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'user.User'
 
-AES_SECRET_KEY = '2HOwmMKZS1wWvq6qxdeA5moUCubLJiXV'
-ENCRYPT = True
 
-from common.logger import LOGGING
+ENCRYPT = env('ENCRYPT', default=False, cast=bool)
+ENCRYPTION_KEY = env('AES_SECRET_KEY', default='')
+
+
 
 LOGGING = LOGGING
+
+
+# Documentation/ Swagger/ DRF Spectacular Settings
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Django Syntax',
+    'DESCRIPTION': 'Best Practice for Django project',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    "SERVERS": [
+        {"url": "http://127.0.0.1:8001", "description": "Development server"},
+        {"url": "http://127.0.0.1:8001", "description": "Staging server"},
+    ],
+}

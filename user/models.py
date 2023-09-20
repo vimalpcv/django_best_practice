@@ -5,7 +5,7 @@ from common.models import BaseModel
 from common.constants import GENDER, MALE, ROLES
 
 
-class Organization(models.Model):
+class Organization(BaseModel):
     name = models.CharField(max_length=50, null=False, blank=False, unique=True)
     description = models.CharField(max_length=500, null=True, blank=True)
     is_active = models.BooleanField(default=True)
@@ -26,10 +26,11 @@ class User(AbstractUser):
     """
     Extending User model
     """
-    emp_id = models.CharField(max_length=10, null=False, blank=False, unique=True, db_index=True)
+    #emp_id = models.CharField(max_length=10, null=False, blank=False, unique=True, db_index=True)
     gender = models.CharField(max_length=6, choices=GENDER, default=MALE)
     #avatar = models.ImageField(upload_to='/avatars', blank=True, null=True)
-    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, null=True, blank=False)
+    organization = models.ForeignKey(Organization, on_delete=models.PROTECT, null=True, blank=False)
+    role = models.CharField(max_length=15, choices=ROLES, default='user')
 
     class Meta:
         # indexes = [
