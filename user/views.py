@@ -8,7 +8,7 @@ from functools import partial
 
 from common.utils import CommonUtils
 from common.logger import info_log, error_log
-from common.permissions import IsAllowedUser
+from common.permissions import IsAllowedUser, method_permission_classes
 from common.constants import SUPER_ADMIN, ADMIN
 from common.error import *
 from user.serializer import *
@@ -24,9 +24,9 @@ class LoginView(APIView):
         tags=["General"],
         request=LoginViewSerializer,
         responses={
-            200: error_schema,
-            400: error_schema,
-            500: error_schema,
+            200: ERROR_SCHEMA,
+            400: ERROR_SCHEMA,
+            500: ERROR_SCHEMA,
         }
     )
     def post(self, request):
@@ -57,7 +57,7 @@ class LoginView(APIView):
                 "access_token": str(refresh.access_token),
                 "refresh_token": str(refresh)
             }
-            return CommonUtils.dispatch_success(request, data)
+            return CommonUtils.dispatch_success(request, status_code=204)
 
         except:
             error_log(request)
@@ -74,8 +74,8 @@ class LogoutView(APIView):
         request=LogoutViewSerializer,
         responses={
             200: {"type": "object", "properties": {'success': {"type": "string"}}},
-            400: error_schema,
-            500: error_schema,
+            400: ERROR_SCHEMA,
+            500: ERROR_SCHEMA,
         }
     )
     def post(self, request):
@@ -112,8 +112,8 @@ class RefreshTokenView(TokenRefreshView):
                     "access_token": {"type": "string"}
                 }
             },
-            400: error_schema,
-            500: error_schema,
+            400: ERROR_SCHEMA,
+            500: ERROR_SCHEMA,
         }
     )
     def post(self, request, *args, **kwargs):
@@ -134,7 +134,7 @@ class RefreshTokenView(TokenRefreshView):
 
 
 class UserDetailView(APIView):
-    permission_classes = (partial(IsAllowedUser, SUPER_ADMIN, ADMIN),)
+    permission_classes = (AllowAny,)
     serializer_class = UserDetailSerializer
 
     @extend_schema(
@@ -147,8 +147,8 @@ class UserDetailView(APIView):
         request=None,
         responses={
             200: serializer_class,
-            400: error_schema,
-            500: error_schema,
+            400: ERROR_SCHEMA,
+            500: ERROR_SCHEMA,
         }
     )
     def get(self, request):
@@ -172,6 +172,7 @@ class UserDetailView(APIView):
             error_log(request)
             return CommonUtils.dispatch_failure(request, INTERNAL_SERVER_ERROR)
 
+
     @extend_schema(
         operation_id="User Detail",
         description="This API is used to create the user.",
@@ -179,10 +180,11 @@ class UserDetailView(APIView):
         request=serializer_class,
         responses={
             200: serializer_class,
-            400: error_schema,
-            500: error_schema,
+            400: ERROR_SCHEMA,
+            500: ERROR_SCHEMA,
         }
     )
+    @method_permission_classes((partial(IsAllowedUser, SUPER_ADMIN),))  # it will override the permission_classes
     def post(self, request):
         try:
             serializer = self.serializer_class(data=request.data)
@@ -205,8 +207,8 @@ class UserDetailView(APIView):
         request=serializer_class,
         responses={
             200: serializer_class,
-            400: error_schema,
-            500: error_schema,
+            400: ERROR_SCHEMA,
+            500: ERROR_SCHEMA,
         }
     )
     def patch(self, request):

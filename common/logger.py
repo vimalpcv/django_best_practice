@@ -13,14 +13,14 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'info': {
-            'format': "[%(asctime)s] => | LOG STATUS - %(levelname)s"
+            'format': "[%(asctime)s] => | LOG STATUS - %(levelname)-5s"
                       " | METHOD - %(method)-4s"
                       " | URL - %(url)s"
                       " | MESSAGE - %(message)s"
                       " |"
         },
         'request': {
-            'format': "[%(asctime)s] => | LOG STATUS - %(levelname)s"
+            'format': "[%(asctime)s] => | LOG STATUS - %(levelname)-5s"
                       " | STATUS - %(status)-7s"
                       " | METHOD - %(method)-4s"
                       " | FETCH_URL - %(url)s"
@@ -31,8 +31,8 @@ LOGGING = {
                       " |"
         },
         'error': {
-            'format': "[%(asctime)s] => | LOG STATUS - %(levelname)s"
-                      " | METHOD - %(method)s"
+            'format': "[%(asctime)s] => | LOG STATUS - %(levelname)-5s"
+                      " | METHOD - %(method)-4s"
                       " | FETCH_URL - %(url)s"
                       " | REQUEST_DATA - %(request_data)s"
                       " | USER - %(user)s"
@@ -118,7 +118,7 @@ info_logger = logging.getLogger('info')
 error_logger = logging.getLogger('error')
 
 
-def info_log(request, message) -> None:
+def info_log(request, message: str) -> None:
     data = {
         'method': request.method,
         'url': request.path
@@ -126,12 +126,16 @@ def info_log(request, message) -> None:
     info_logger.info(message, extra=data)
 
 
-def error_log(request) -> None:
+def error_log(request, message: str = None) -> None:
     exc_type, exc_value, exc_traceback = sys.exc_info()
-    data = {'method': request.method, 'url': request.path,
-            'request_data': request.data,
-            'user': request.user,
-            'exc_type': exc_type.__name__,
-            'exc_file_name': exc_traceback.tb_frame.f_code.co_filename,
-            'exc_line_no': exc_traceback.tb_lineno}
+    data = {
+        'method': request.method,
+        'url': request.path,
+        'request_data': request.data,
+        'user': request.user,
+        'exc_type': exc_type.__name__,
+        'exc_file_name': exc_traceback.tb_frame.f_code.co_filename,
+        'exc_line_no': exc_traceback.tb_lineno}
+    if message:
+        exc_value = message + ": " + str(exc_value)
     error_logger.error(exc_value, extra=data)

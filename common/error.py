@@ -1,4 +1,4 @@
-error_schema = {
+ERROR_SCHEMA = {
     "type": "object",
     "properties": {
         "code": {"type": "string", },
@@ -48,7 +48,6 @@ ENCRYPTION_ENABLED = {
     }
 }
 
-# Login Error Codes
 INVALID_REFRESH_TOKEN = {
     'status_code': '400',
     'error': {
@@ -56,7 +55,6 @@ INVALID_REFRESH_TOKEN = {
         'message': 'Refresh Token is invalid or expired'
     }
 }
-
 
 
 USER_NOT_FOUND = {
@@ -83,7 +81,6 @@ USER_INACTIVE = {
     }
 }
 
-
 ORGANIZATION_INACTIVE = {
     'status_code': '400',
     'error': {
@@ -91,7 +88,6 @@ ORGANIZATION_INACTIVE = {
         'message': 'Organization is inactive'
     }
 }
-
 
 UNAUTHORIZED = {
     'status_code': '401',

@@ -14,15 +14,13 @@ class EncryptionMiddleware:
     def __call__(self, request):
         try:
             if request.content_type == "application/json":
-                data = json.loads(request.body.decode("utf-8")).get("data", None)
+                data = json.loads(request.body.decode("utf-8"))
                 if data:
                     if self.ENCRYPT and type(data) == str:
                         encrypted_data = CommonUtils.b64_decode(data.encode("utf-8"))
                         decrypted_data, error = Cipher.decrypt(encrypted_data)
                         if not error:
-                            decrypted_data = decrypted_data.decode('utf-8').replace("'", '"')
-                            decrypted_data = ('{"data": ' + decrypted_data + '}')
-                            request._body = decrypted_data.encode("utf-8")
+                            request._body = decrypted_data
                         else:
                             response_data = DECRYPTION_ERROR["error"]
                             response_data["detail"] = str(error)
@@ -34,8 +32,8 @@ class EncryptionMiddleware:
                             return JsonResponse(ENCRYPTION_NOT_ENABLED["error"], status=ENCRYPTION_NOT_ENABLED["status_code"])
                     else:
                         request._body = request.body
-            else:
-                request._body = "{}".encode("utf-8") if request.body == b'' else request.body
+                else:
+                    request._body = "{}".encode("utf-8") if request.body == b'' else request.body
         except Exception as e:
             response_data = INTERNAL_SERVER_ERROR["error"]
             response_data["detail"] = str(e)
@@ -44,10 +42,8 @@ class EncryptionMiddleware:
         # -----------
         response = self.get_response(request)
         # -----------
-
-        if self.ENCRYPT and response.status_code == 200:
-            data = json.loads(response.content.decode("utf-8"))
-            data["data"] = Cipher.encrypt(str(data["data"]).encode("utf-8"))
-            response.content = json.dumps(data).encode("utf-8")
-
+        if hasattr(response, 'data') and 200 <= response.status_code < 300:
+            response.data = CommonUtils.b64_encode(Cipher.encrypt(str(response.data).encode('utf-8')))
+            response._is_rendered = False
+            response.render()
         return response

@@ -12,13 +12,13 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from . import env, BASE_DIR
-import datetime, os
 from datetime import timedelta
 from common.logger import LOGGING
 
-SECRET_KEY = 'django-insecure-9qd6id-rfjca%#yo#9e@oscy-!u)q#o(bu&ybe$lc1)1)h0qd%'
+SECRET_KEY = env('SECRET_KEY', default='django-unsecured-secret-key')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -27,10 +27,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
     'rest_framework',
-    'rest_framework_simplejwt.token_blacklist',
-    'drf_spectacular',
 
     'user',
 ]
@@ -39,25 +36,13 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ),
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
     ),
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'EXCEPTION_HANDLER': 'common.exception_handlers.custom_exception_handler',
-
 }
 
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=10),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-    'UPDATE_LAST_LOGIN': True,
-    'SIGNING_KEY': SECRET_KEY,
-    "AUTH_HEADER_TYPES": ("Bearer",),
-    "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
-}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -69,6 +54,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'common.middleware.EncryptionMiddleware'
 ]
+
 ROOT_URLCONF = 'common.urls'
 
 TEMPLATES = [
@@ -146,10 +132,27 @@ ENCRYPTION_KEY = env('AES_SECRET_KEY', default='')
 LOGGING = LOGGING
 
 
-# Documentation/ Swagger/ DRF Spectacular Settings
+# JWT Settings
+INSTALLED_APPS += ['rest_framework_simplejwt', 'rest_framework_simplejwt.token_blacklist']
+REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'] = ('rest_framework_simplejwt.authentication.JWTAuthentication',)
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=10),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'UPDATE_LAST_LOGIN': True,
+    'SIGNING_KEY': SECRET_KEY,
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
+}
+
+# API Documentation Settings
+INSTALLED_APPS += ['drf_spectacular',]
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Django Syntax',
-    'DESCRIPTION': 'Best Practice for Django project',
+    'TITLE': 'Best Practice Django Syntax',
+    'DESCRIPTION': 'This project serves as a comprehensive guide and template for building robust and scalable web '
+                   'APIs using Django and Django Rest Framework (DRF). It embodies best practices for code '
+                   'organization, authentication methods, efficient logging, and thorough documentation. '
+                   'When embarking on a Django project, this resource will help to kickstart API development '
+                   'with confidence.',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
     "SERVERS": [
@@ -157,3 +160,8 @@ SPECTACULAR_SETTINGS = {
         {"url": "http://127.0.0.1:8001", "description": "Staging server"},
     ],
 }
+
+
+
+
+

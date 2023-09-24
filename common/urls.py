@@ -16,28 +16,25 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from user import urls as user_urls
-from common.views import *
-from drf_spectacular.views import SpectacularAPIView
-from drf_spectacular.views import SpectacularRedocView, SpectacularSwaggerView
-from user.views import LoginView, LogoutView, RefreshTokenView
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 
+from user import urls as user_urls
+from user.views import LoginView, LogoutView, RefreshTokenView
+from common.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('user/', include(user_urls)),
-    path('', HealthCheck.as_view(), name='health'),
-    path('template/', Template.as_view(), name='template'),
 
+    path('', HealthCheck.as_view(), name='health'),
     path("login/", LoginView.as_view(), name="login"),
     path("logout/", LogoutView.as_view(), name="logout"),
     path("refresh/", RefreshTokenView.as_view(), name="refresh"),
 
-    # Download the Swagger/OpenAPI schema
-    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-    # Swagger UI:
-    path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
-    # Redoc UI:
-    path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+    path('user/', include(user_urls)),
+
+    # API Documentation
+    path('api/docs/schema', SpectacularAPIView.as_view(), name='schema'),
+    path('api/docs/swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/docs/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 
 ]

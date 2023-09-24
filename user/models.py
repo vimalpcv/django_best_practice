@@ -27,15 +27,17 @@ class User(AbstractUser):
     Extending User model
     """
     #emp_id = models.CharField(max_length=10, null=False, blank=False, unique=True, db_index=True)
+    # avatar = models.ImageField(upload_to='/avatars', blank=True, null=True)
+
     gender = models.CharField(max_length=6, choices=GENDER, default=MALE)
-    #avatar = models.ImageField(upload_to='/avatars', blank=True, null=True)
     organization = models.ForeignKey(Organization, on_delete=models.PROTECT, null=True, blank=False)
     role = models.CharField(max_length=15, choices=ROLES, default='user')
 
     class Meta:
-        # indexes = [
-        #     models.Index(fields=['id'])
-        # ]
+        indexes = [
+            models.Index(fields=['role'], name='role_idx'),
+            models.Index(fields=['organization'], name='organization_idx'),
+        ]
         ordering = ['-id']
 
     def __str__(self):
