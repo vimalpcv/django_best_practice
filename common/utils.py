@@ -3,7 +3,6 @@ from rest_framework.response import Response
 from django.conf import settings
 from typing import Dict, Union
 
-from common.mangers import Cipher
 from common.logger import info_log, error_log
 from common.constants import SUCCESS, FAILURE
 
@@ -41,11 +40,11 @@ class CommonUtils:
             error_log(request)
 
     @staticmethod
-    def dispatch_failure(request, error: dict, error_message=None):
+    def dispatch_failure(request, error: dict, data: dict | str | None = None):
         try:
             response_data = error['error']
-            if error_message:
-                response_data['detail'] = error_message
+            if data:
+                response_data['detail'] = data
 
             # logging the failure response
             extras = {

@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 
 from common.models import BaseModel
 from common.constants import GENDER, MALE, ROLES
@@ -19,16 +19,14 @@ class Organization(BaseModel):
         verbose_name_plural = 'Organizations'
 
     def __str__(self):
-        return f'{self.id}: {self.name}'
+        return f'{self.name} ({self.id})'
 
 
 class User(AbstractUser):
     """
-    Extending User model
+    Custom User model with email as unique field.
     """
-    #emp_id = models.CharField(max_length=10, null=False, blank=False, unique=True, db_index=True)
-    # avatar = models.ImageField(upload_to='/avatars', blank=True, null=True)
-
+    email = models.EmailField(max_length=100, unique=True, null=False, blank=False)
     gender = models.CharField(max_length=6, choices=GENDER, default=MALE)
     organization = models.ForeignKey(Organization, on_delete=models.PROTECT, null=True, blank=False)
     role = models.CharField(max_length=15, choices=ROLES, default='user')
@@ -41,5 +39,5 @@ class User(AbstractUser):
         ordering = ['-id']
 
     def __str__(self):
-        return f'{self.id}: {self.first_name} {self.last_name}'
+        return f'{self.email} ({self.id})'
 

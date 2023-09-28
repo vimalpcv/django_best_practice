@@ -1,22 +1,16 @@
 from rest_framework import serializers
-from user.models import User
+from user.models import User, Organization
 
 
-class LoginViewSerializer(serializers.Serializer):
-    username = serializers.CharField()
-    password = serializers.CharField()
-
-
-class LogoutViewSerializer(serializers.Serializer):
-    refresh_token = serializers.CharField()
-
-
-class RefreshViewSerializer(serializers.Serializer):
-    refresh_token = serializers.CharField()
+class OrganizationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Organization
+        fields = ('id', 'name', 'description')
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
+    organization = OrganizationSerializer()
+
     class Meta:
         model = User
-        fields = 'id', 'first_name', 'last_name', 'email', 'username', 'is_active', 'organization'
-        help_text = "Custom help text for this serializer."
+        fields = ('id', 'first_name', 'last_name', 'email', 'username', 'organization')

@@ -3,8 +3,7 @@ from datetime import datetime
 from environment import env, BASE_DIR
 
 # logging configuration
-LOGS = '/logs/'
-LOGS_DIR = os.path.join(BASE_DIR, 'logs')
+LOGS_DIR = os.path.join(BASE_DIR, 'logs/')
 
 logging_environment = env('LOGGING', default='STREAM_HANDLER')
 
@@ -65,18 +64,17 @@ if logging_environment == 'FILE_HANDLER':
     LOGGING['handlers']['info'] = {
         'formatter': 'info',
         'class': 'logging.FileHandler',
-        'filename': str(BASE_DIR) + LOGS + 'info_log__{}.log'.format(datetime.now().strftime("%Y_%m_%d")),
+        'filename': str(LOGS_DIR) + 'info_log__{}.log'.format(datetime.now().strftime("%Y_%m_%d")),
     }
     LOGGING['handlers']['request'] = {
         'formatter': 'request',
         'class': 'logging.FileHandler',
-        'filename': str(
-            BASE_DIR) + LOGS + 'request_log__{}.log'.format(datetime.now().strftime("%Y_%m_%d")),
+        'filename': str(LOGS_DIR) + 'request_log__{}.log'.format(datetime.now().strftime("%Y_%m_%d")),
     }
     LOGGING['handlers']['error'] = {
         'formatter': 'error',
         'class': 'logging.FileHandler',
-        'filename': str(BASE_DIR) + LOGS + 'error_log__{}.log'.format(datetime.now().strftime("%Y_%m_%d")),
+        'filename': str(LOGS_DIR) + 'error_log__{}.log'.format(datetime.now().strftime("%Y_%m_%d")),
     }
 
 elif logging_environment == 'STREAM_HANDLER':

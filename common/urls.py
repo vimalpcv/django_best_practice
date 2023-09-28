@@ -19,22 +19,24 @@ from django.urls import path, include
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 
 from user import urls as user_urls
-from user.views import LoginView, LogoutView, RefreshTokenView
+from authentication import urls as authentication_urls
 from common.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('', HealthCheck.as_view(), name='health'),
-    path("login/", LoginView.as_view(), name="login"),
-    path("logout/", LogoutView.as_view(), name="logout"),
-    path("refresh/", RefreshTokenView.as_view(), name="refresh"),
+
 
     path('user/', include(user_urls)),
+    path('auth/', include(authentication_urls)),
 
     # API Documentation
     path('api/docs/schema', SpectacularAPIView.as_view(), name='schema'),
     path('api/docs/swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/docs/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 
+
+
 ]
+
