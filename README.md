@@ -1,7 +1,11 @@
 
-# Django Best Practices
+# Django Best Practice
 
-This project serves as a comprehensive guide and template for building robust and scalable web APIs using Django and Django Rest Framework (DRF). It embodies best practices for code organization, authentication methods, efficient logging, and thorough documentation. When embarking on a Django project, this resource will help to kickstart API development with confidence.
+This project serves as a comprehensive guide and blueprint for creating strong and scalable web APIs with Django and 
+Django Rest Framework (DRF). It provides detailed instructions for organizing code, implementing authentication and 
+authorization, efficient logging, popular database connection choices, secure encryption and decryption techniques 
+using the best Cipher mechanism, and comprehensive documentation. 
+When starting a Django project, this resource is your confident jumpstart for API development.
 
 ## Getting Started
 
@@ -68,7 +72,7 @@ Contributions are welcome! If you have ideas to improve this project or want to 
 ## Setup
 
 
-Follow these steps to set up and run the "Django Best Practices" project on your local development environment:
+Follow these steps to set up and run the "Django Best Practice" project on your local development environment:
 
 ### Prerequisites
 

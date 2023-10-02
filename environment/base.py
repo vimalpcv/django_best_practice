@@ -27,12 +27,8 @@ INSTALLED_APPS = [
 AUTH_USER_MODEL = 'user.User'
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': (
-        'base.permissions.IsAuthenticated',
-    ),
-    'DEFAULT_RENDERER_CLASSES': (
-        'rest_framework.renderers.JSONRenderer',
-    ),
+    'DEFAULT_PERMISSION_CLASSES': ('base.permissions.IsAuthenticated',),
+    'DEFAULT_RENDERER_CLASSES': ('rest_framework.renderers.JSONRenderer',),
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'EXCEPTION_HANDLER': 'base.exception_handlers.custom_exception_handler',
 }
@@ -124,7 +120,6 @@ REST_AUTH = {
     'JWT_AUTH_HTTPONLY': False,
     'USER_DETAILS_SERIALIZER': "user.serializer.UserDetailSerializer",
     'REGISTER_SERIALIZER': 'dj_rest_auth.registration.serializers.RegisterSerializer',
-    'AUTH_TOKEN_VALIDITY': 30 / (24 * 60 * 60),
 }
 
 # Allauth Settings
@@ -135,7 +130,7 @@ ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 
-JWT_AUTHENTICATION_ENABLED = env('JWT_AUTHENTICATION_ENABLED', default=False, cast=bool)
+JWT_AUTHENTICATION_ENABLED = env('JWT_AUTHENTICATION_ENABLED', default=True, cast=bool)
 if JWT_AUTHENTICATION_ENABLED:
     INSTALLED_APPS += [
         'rest_framework_simplejwt',
@@ -146,8 +141,8 @@ if JWT_AUTHENTICATION_ENABLED:
     REST_AUTH['USE_JWT'] = True
     # JWT Settings
     SIMPLE_JWT = {
-        'ACCESS_TOKEN_LIFETIME': timedelta(minutes=100),
-        'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+        'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+        'REFRESH_TOKEN_LIFETIME': timedelta(minutes=30),
         'UPDATE_LAST_LOGIN': True,
         'SIGNING_KEY': SECRET_KEY,
         "AUTH_HEADER_TYPES": ("Bearer",),
@@ -158,7 +153,7 @@ else:
         'rest_framework.authtoken',
     ]
     REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'] = ('rest_framework.authentication.TokenAuthentication',)
-    TOKEN_LIFETIME = timedelta(seconds=1)
+    TOKEN_LIFETIME = timedelta(minutes=30)
 
 SOCIAL_LOGIN_ENABLED = env('SOCIAL_LOGIN_ENABLED', default=True, cast=bool)
 if SOCIAL_LOGIN_ENABLED:
