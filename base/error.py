@@ -83,13 +83,15 @@ INVALID_PASSWORD = {
     }
 }
 
-ACCOUNT_NOT_FOUND = {
-    'status_code': '404',
+
+SOCIAL_ACCOUNT_NOT_CONFIGURED = {
+    'status_code': '400',
     'error': {
-        'code': 'ACCOUNT_NOT_FOUND',
-        'message': 'Account not found'
+        'code': 'SOCIAL_ACCOUNT_NOT_CONFIGURED',
+        'message': 'Social Account is not configured'
     }
 }
+
 
 # Error Codes for Authorization
 UNAUTHORIZED = {
@@ -107,8 +109,6 @@ USER_NOT_FOUND = {
         'message': 'User not found'
     }
 }
-
-
 
 USER_INACTIVE = {
     'status_code': '400',

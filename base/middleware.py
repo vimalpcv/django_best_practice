@@ -1,15 +1,14 @@
 import json
 from django.http import JsonResponse
 from django.conf import settings
-from common.error import (
+from base.error import (
     DECRYPTION_ERROR,
     ENCRYPTION_NOT_ENABLED,
     ENCRYPTION_ENABLED,
     INTERNAL_SERVER_ERROR,
     INVALID_CONTENT_TYPE
 )
-from common.utils import CommonUtils
-from common.mangers import Cipher
+from .utils import BaseUtils, CipherUtils
 
 
 class ContentTypeMiddleware:
@@ -17,8 +16,10 @@ class ContentTypeMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        if request.method in ['POST', 'PUT', 'PATCH', 'DELETE'] and request.content_type != "application/json":
-            return JsonResponse(INVALID_CONTENT_TYPE["error"], status=INVALID_CONTENT_TYPE["status_code"])
+        if request.path.strip("/").split("/")[0] == 'api':
+            print(request.content_type)
+            if request.method in ['POST', 'PUT', 'PATCH', 'DELETE'] and request.content_type != "application/json":
+                return JsonResponse(INVALID_CONTENT_TYPE["error"], status=INVALID_CONTENT_TYPE["status_code"])
 
         response = self.get_response(request)
         return response
@@ -36,8 +37,8 @@ class EncryptionMiddleware:
             data = json.loads(request.body.decode("utf-8"))
             if data:
                 if self.ENCRYPT and type(data) == str:
-                    encrypted_data = CommonUtils.b64_decode(data.encode("utf-8"))
-                    decrypted_data, error = Cipher.decrypt(encrypted_data)
+                    encrypted_data = BaseUtils.b64_decode(data.encode("utf-8"))
+                    decrypted_data, error = CipherUtils.decrypt(encrypted_data)
                     if not error:
                         request_body = decrypted_data
                     else:
@@ -66,7 +67,7 @@ class EncryptionMiddleware:
         # -----------
 
         if hasattr(response, 'data') and 200 <= response.status_code < 300:
-            response.data = CommonUtils.b64_encode(Cipher.encrypt(str(response.data).encode('utf-8')))
+            response.data = BaseUtils.b64_encode(CipherUtils.encrypt(str(response.data).encode('utf-8')))
             response._is_rendered = False
             response.render()
         return response

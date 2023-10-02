@@ -1,13 +1,11 @@
-import base64, logging
+import base64, logging, copy
 from rest_framework.response import Response
-from django.conf import settings
-from typing import Dict, Union
-
-from common.logger import info_log, error_log
-from common.constants import SUCCESS, FAILURE
+from base.logger import error_log
+from base.constants import SUCCESS, FAILURE
+from base.error import INTERNAL_SERVER_ERROR
 
 
-class CommonUtils:
+class BaseUtils:
 
     @staticmethod
     def b64_encode(data: bytes) -> bytes:
@@ -18,7 +16,7 @@ class CommonUtils:
         return base64.b64decode(data)
 
     @staticmethod
-    def dispatch_success(request, data: str | dict = None, status_code=200):
+    def dispatch_success(request, data: dict | None = None, status_code=200) -> Response:
         try:
             # logging the success response
             extras = {
@@ -31,16 +29,15 @@ class CommonUtils:
             }
             logger = logging.getLogger('request')
             logger.info('Request Completed', extra=extras)
-
-            if not data:
-                data = {'status': SUCCESS}
-
             return Response(data, status=status_code)
-        except:
+        except Exception as e:
             error_log(request)
+            error = copy.deepcopy(INTERNAL_SERVER_ERROR['error'])
+            error['detail'] = str(e)
+            return Response(error, status=500)
 
     @staticmethod
-    def dispatch_failure(request, error: dict, data: dict | str | None = None):
+    def dispatch_failure(request, error: dict, data: str | dict | None = None) -> Response:
         try:
             response_data = error['error']
             if data:
@@ -58,9 +55,9 @@ class CommonUtils:
             logger = logging.getLogger('request')
             logger.info(response_data['message'], extra=extras)
 
-            # if settings.ENCRYPT:
-            #     response_data = CommonUtils.b64_encode(Cipher.encrypt(str(response_data).encode('utf-8')))
-
             return Response(response_data, status=error['status_code'])
-        except:
+        except Exception as e:
             error_log(request)
+            error = copy.deepcopy(INTERNAL_SERVER_ERROR['error'])
+            error['detail'] = str(e)
+            return Response(error, status=500)

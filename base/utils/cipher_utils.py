@@ -4,7 +4,7 @@ from django.conf import settings
 from typing import Union, Tuple
 
 
-class CipherManager:
+class CipherUtils:
     def __init__(self):
         self.key = settings.ENCRYPTION_KEY.encode('utf-8')
         self.ENCRYPT = settings.ENCRYPT

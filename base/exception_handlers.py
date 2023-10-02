@@ -1,5 +1,5 @@
 from rest_framework.views import exception_handler
-from common.error import UNAUTHORIZED
+from base.error import UNAUTHORIZED
 
 
 def custom_exception_handler(exc, context):

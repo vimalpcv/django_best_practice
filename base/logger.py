@@ -6,6 +6,10 @@ from environment import env, BASE_DIR
 LOGS_DIR = os.path.join(BASE_DIR, 'logs/')
 
 logging_environment = env('LOGGING', default='STREAM_HANDLER')
+if logging_environment == 'FILE_HANDLER' and not os.path.exists(LOGS_DIR):
+    # create logs directory if not exists
+    os.makedirs(LOGS_DIR)
+    print("Log directory created.")
 
 LOGGING = {
     'version': 1,
@@ -94,20 +98,20 @@ elif logging_environment == 'STREAM_HANDLER':
 elif logging_environment == 'LOGSTASH_HANDLER':
     LOGGING['handlers']['info'] = {
         'class': 'logstash.TCPLogstashHandler',
-        'host': 'logstash',
-        'port': 5959,  # default : 5959
+        'host': env('LOGSTASH_HOST'),
+        'port': env('LOGSTASH_PORT', default=5959),
         'formatter': 'error',
     }
     LOGGING['handlers']['request'] = {
         'class': 'logstash.TCPLogstashHandler',
-        'host': 'logstash',
-        'port': 5959,  # default : 5959
+        'host': env('LOGSTASH_HOST'),
+        'port': env('LOGSTASH_PORT', default=5959),
         'formatter': 'request',
     }
     LOGGING['handlers']['error'] = {
         'class': 'logstash.TCPLogstashHandler',
-        'host': 'logstash',
-        'port': 5959,  # default : 5959
+        'host': env('LOGSTASH_HOST'),
+        'port': env('LOGSTASH_PORT', default=5959),
         'formatter': 'error',
     }
 

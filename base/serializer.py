@@ -1,8 +1,9 @@
 from rest_framework import serializers
 from dj_rest_auth.registration.serializers import RegisterSerializer
-from common.constants import ROLES, EMPLOYEE, GENDER, MALE
+from base.constants import ROLES, EMPLOYEE, GENDER, MALE
 from user.models import Organization
 from user.serializer import UserDetailSerializer
+from django.conf import settings
 
 
 class CustomRegisterSerializer(RegisterSerializer):
@@ -39,7 +40,10 @@ class LogoutViewSerializer(serializers.Serializer):
     """
     Serializer for the logout endpoint.
     """
-    refresh = serializers.CharField()
+    if settings.JWT_AUTHENTICATION_ENABLED:
+        refresh = serializers.CharField()
+    else:
+        pass
 
 
 class RefreshViewSerializer(serializers.Serializer):
@@ -56,4 +60,3 @@ class LoginResponseSerializer(serializers.Serializer):
     access = serializers.CharField()
     refresh = serializers.CharField()
     user = UserDetailSerializer()
-

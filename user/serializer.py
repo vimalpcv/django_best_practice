@@ -14,3 +14,10 @@ class UserDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'first_name', 'last_name', 'email', 'username', 'organization')
+
+
+class UsereditSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name')

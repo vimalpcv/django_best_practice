@@ -1,8 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 
-from common.models import BaseModel
-from common.constants import GENDER, MALE, ROLES
+from base.models import BaseModel
+from base.constants import GENDER, MALE, ROLES
 
 
 class Organization(BaseModel):
@@ -37,6 +37,9 @@ class User(AbstractUser):
             models.Index(fields=['organization'], name='organization_idx'),
         ]
         ordering = ['-id']
+        verbose_name = 'User'
+        verbose_name_plural = 'Users'
+        db_table = 'user'
 
     def __str__(self):
         return f'{self.email} ({self.id})'
