@@ -50,3 +50,9 @@ local_config.yaml
 # Ignore Docker-related files (customize as needed)
 Dockerfile
 docker-compose.yml
+
+# Ignore nohub out file
+nohup.out
+
+# Ignore static files
+/static

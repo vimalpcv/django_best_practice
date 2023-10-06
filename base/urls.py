@@ -15,12 +15,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.conf.urls.static import static
 from django.conf import settings
 from django.urls import path, include
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
-
-from user import urls as user_urls
 from .views import *
+from user import urls as user_urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -41,7 +41,8 @@ urlpatterns = [
     path('api/docs/swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/docs/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
 
 if settings.SOCIAL_LOGIN_ENABLED:
     urlpatterns += [
@@ -53,4 +54,4 @@ if settings.SOCIAL_LOGIN_ENABLED:
 
         # Authentication - social login
         path("api/login/google/", GoogleLogin.as_view(), name="google_login"),
-    ]
+]

@@ -2,8 +2,7 @@ from django.contrib import admin
 from user.models import User, Organization
 
 
-# Register your models here.
-
+@admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     list_display = (
         'id', 'username', 'email', 'is_active', 'role', 'organization', 'first_name', 'last_name',
@@ -13,6 +12,7 @@ class UserAdmin(admin.ModelAdmin):
     ordering = ('-id',)
 
 
+@admin.register(Organization)
 class OrganizationAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'is_active', 'created_at', 'updated_at')
     search_fields = ('name',)
@@ -20,6 +20,4 @@ class OrganizationAdmin(admin.ModelAdmin):
     ordering = ('-id',)
 
 
-admin.site.register(User, UserAdmin)
-admin.site.register(Organization, OrganizationAdmin)
 

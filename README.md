@@ -1,11 +1,24 @@
 
 # Django Best Practice
 
-This project serves as a comprehensive guide and blueprint for creating strong and scalable web APIs with Django and 
-Django Rest Framework (DRF). It provides detailed instructions for organizing code, implementing authentication and 
-authorization, efficient logging, popular database connection choices, secure encryption and decryption techniques 
-using the best Cipher mechanism, and comprehensive documentation. 
-When starting a Django project, this resource is your confident jumpstart for API development.
+Django Best Practices is a thoughtfully designed project that serves as a standard guide to architecting robust and 
+scalable RESTful APIs with Django and DRF. It incorporates advanced design patterns to ensure the 
+long-term maintainability and extensibility of your project.
+
+It provides:
+
+📜 A standardized and easily understandable clean code structure.
+
+🔒 Various Authentication and authorization methods for data security.
+
+📝 Comprehensive Logging for monitoring and debugging.
+
+💽 Seamless integration with multiple databases.
+
+🔐 Advanced Cipher(encryption) techniques for data privacy
+
+Our developers can confidently use this resource as a foundation for API development when initiating a Django project. 
+This ensures that your project follows best practices from the outset.
 
 ## Getting Started
 
@@ -71,12 +84,11 @@ Contributions are welcome! If you have ideas to improve this project or want to 
 
 ## Setup
 
-
 Follow these steps to set up and run the "Django Best Practice" project on your local development environment:
 
 ### Prerequisites
 
-- [Python](https://www.python.org/downloads/) (3.6 or higher)
+- [Python](https://www.python.org/downloads/) (3.6 or higher, 3.11 recommended)
 - [Virtualenv](https://virtualenv.pypa.io/en/latest/) (recommended)
 
 ### Clone the Repository
@@ -114,7 +126,41 @@ echo "DB_USER=your_database_user" >> .env
 echo "DB_PASSWORD=your_database_password" >> .env
 ```
 
-## Supported Databases
+## Local / Development Deployment
+
+To deploy your project in a local or development environment, follow these steps:
+
+1. Set the `DJANGO_ENVIRONMENT` environment variable to `local` or `development`.
+2. Check and configure the database environment variables, ensuring they are correctly set for your local or development database.
+3. Run the `makemigrations` command to create database migrations.
+    ```bash
+    python manage.py makemigrations
+    ```
+4. Run the `migration` command to apply any pending database migrations.
+    ```bash
+    python manage.py migrate
+    ```
+4. Run the following command to start the development server:
+    ```bash
+    python manage.py runserver
+    ```
+
+## Production Deployment
+
+To deploy your project in a production environment, follow these steps:
+
+1. Set the `DJANGO_ENVIRONMENT` environment variable to `production`.
+2. Check and configure the database environment variables, ensuring they are correctly set for your production database.
+3. Run the migration command to apply any pending database migrations.
+    ```bash
+    python manage.py migrate
+    ```
+4. For production deployment, execute the following command:
+   ```bash
+   nohup gunicorn --bind 0.0.0.0:8000 --workers 4 --timeout 1800 base.wsgi >/dev/null 2>&1 &
+    ```
+
+## Databases
 
 In this project, we've implemented support for various databases, providing you with the flexibility to choose the one that best suits your needs. The supported databases are as follows:
 
