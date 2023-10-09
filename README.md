@@ -15,7 +15,9 @@ It provides:
 
 💽 Seamless integration with multiple databases.
 
-🔐 Advanced Cipher(encryption) techniques for data privacy
+🔐 Advanced Cipher(encryption) techniques for data privacy.
+
+✉️ Standardized and Uniformed request and responses for APIs.
 
 Our developers can confidently use this resource as a foundation for API development when initiating a Django project. 
 This ensures that your project follows best practices from the outset.
@@ -82,6 +84,67 @@ Contributions are welcome! If you have ideas to improve this project or want to 
 | `Payment`                 | `Stripe`                                            |             |
 | `Documentation`           | `Postman`,`Swagger, Redoc`                          |             |
 
+## Project Strucure
+```
+├── Django Best Practice
+    ├── base
+    ├── management
+        ├── __init__.py
+        ├── commands
+            ├── __init__.py
+            ├── setup_backend.py
+    ├── settings
+        ├── __init__.py
+        ├── base.py
+        ├── local.py
+        ├── development.py   
+        ├── staging.py
+        ├── production.py
+    ├── utils
+        ├── __init__.py
+        ├── base_utils.py
+        ├── cipher_utils.py
+        ├── payment_utils.py
+    ├── views
+        ├── __init__.py
+        ├── base_views.py
+        ├── auth_views.py
+    ├── __init__.py
+    ├── adapter.py
+    ├── asgi.py
+    ├── constants.py
+    ├── error.py
+    ├── exception_handlers.py
+    ├── logger.py
+    ├── middleware.py
+    ├── models.py
+    ├── permissions.py
+    ├── serializer.py
+    ├── urls.py
+    ├── wsgi.py
+    ├── user
+        ├── migrations
+            ├── __init__.py
+            ├── 0001_initial.py
+        ├── __init__.py
+        ├── serializer.py
+        ├── models.py
+        ├── apps.py
+        ├── views.py
+        ├── tests.py
+        ├── urls.py
+        ├── admin.py
+    ├── static
+    ├── .env
+    ├── .env.example
+    ├── .gitignore
+    ├── db.sqlite3
+    ├── manage.py
+    ├── README.md
+    ├── requirements.txt
+```
+
+
 ## Setup
 
 Follow these steps to set up and run the "Django Best Practice" project on your local development environment:
@@ -140,7 +203,11 @@ To deploy your project in a local or development environment, follow these steps
     ```bash
     python manage.py migrate
     ```
-4. Run the following command to start the development server:
+5. Collect the static files into the static file directory.
+    ```bash
+    python manage.py collectstatic
+    ```
+6. Run the following command to start the development server:
     ```bash
     python manage.py runserver
     ```
@@ -155,7 +222,11 @@ To deploy your project in a production environment, follow these steps:
     ```bash
     python manage.py migrate
     ```
-4. For production deployment, execute the following command:
+4. Collect the static files into the static file directory.
+    ```bash
+    python manage.py collectstatic
+    ```
+5. For production deployment, execute the following command:
    ```bash
    nohup gunicorn --bind 0.0.0.0:8000 --workers 4 --timeout 1800 base.wsgi >/dev/null 2>&1 &
     ```
@@ -362,6 +433,9 @@ exclude = True
 # tags
 tags = ["User"]
 
+# title (will be used in Postman and Redoc)   
+operation_id="Login",
+
 # parameters
 from drf_spectacular.utils import OpenApiParameter
 
@@ -389,7 +463,7 @@ request = {
 from base.error import ERROR_SCHEMA
 
 responses = {
-    202: OutputSerializer,
+    200: OutputSerializer,
     202: {
         "type": "object",
         "example": {

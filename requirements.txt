@@ -6,7 +6,6 @@ gunicorn==21.2.0
 drf_spectacular==0.26.5
 dj-rest-auth[with_social]==5.0.1
 djangorestframework-simplejwt==5.3.0            # for JWT
-
 pycryptodome==3.19.0                            # for Cipher(Encryption/Decryption)
 psycopg2==2.9.8                                 # for PostgreSQL
 mysqlclient==2.2.0                              # for MySQL and MariaDB

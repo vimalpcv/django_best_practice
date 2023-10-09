@@ -14,6 +14,7 @@ class HealthCheck(APIView):
 
     @extend_schema(
         tags=["General"],
+        operation_id="Health Check",
         responses={
             200: {"type": "string", "example": "SUCCESS"},
         }

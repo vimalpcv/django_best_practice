@@ -1,11 +1,8 @@
 from rest_framework.permissions import AllowAny, IsAuthenticated as _IsAuthenticated
 from django.conf import settings
 from rest_framework.authtoken.models import Token
-from datetime import timedelta
 from django.utils import timezone
 from rest_framework.exceptions import AuthenticationFailed
-
-
 
 
 def method_permission_classes(permission_classes):

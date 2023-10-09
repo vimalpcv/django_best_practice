@@ -39,7 +39,7 @@ class BaseUtils:
     @staticmethod
     def dispatch_failure(request, error: dict, data: str | dict | None = None) -> Response:
         try:
-            response_data = error['error']
+            response_data = copy.deepcopy(error['error'])
             if data:
                 response_data['detail'] = data
 
