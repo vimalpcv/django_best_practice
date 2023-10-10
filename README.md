@@ -1,4 +1,3 @@
-
 # Django Best Practice
 
 Django Best Practices is a thoughtfully designed project that serves as a standard guide to architecting robust and 
